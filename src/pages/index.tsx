@@ -2,21 +2,47 @@ import { getCookie } from "cookies-next"
 import Head from "next/head"
 import Image from "next/image"
 import Link from "next/link"
+import { useEffect } from "react"
 
 import { DataTable } from "~/components/dogs/data-table"
 import { LogoutButton } from "~/components/logout-button"
 import { Button } from "~/components/ui/button"
+import { usePagination } from "~/context/pagination-context"
 import { useBreeds } from "~/hooks/dogs/useBreeds"
 import { useDogs } from "~/hooks/dogs/useDogs"
 import { useSearch } from "~/hooks/dogs/useSearch"
 import { columns } from "~/lib/dogs/columns"
 
 export default function Home() {
+  const {
+    state: { pageIndex, pageSize },
+    dispatch,
+  } = usePagination()
+
   const { data: allBreeds } = useBreeds()
-  const { data: results } = useSearch({})
+  const { data: results, refetch: refreshSearch } = useSearch({
+    breeds: ["Golden Retriever"],
+    size: Number(pageSize).toString(),
+    from: (pageIndex * pageSize).toString(),
+  })
   const { data: dogs } = useDogs(results?.resultIds || [])
 
-  console.log(results)
+  useEffect(() => {
+    if (results?.total) {
+      dispatch({ type: "TOTAL_COUNT_CHANGED", payload: results?.total })
+    }
+  }, [dispatch, results?.total])
+
+  useEffect(() => {
+    const refetch = async () => {
+      await refreshSearch()
+    }
+    try {
+      void refetch()
+    } catch (error) {
+      console.error(error)
+    }
+  }, [pageIndex, refreshSearch])
 
   const isAccessTokenSet = getCookie("access-token-set")
 
