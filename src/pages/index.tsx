@@ -3,6 +3,10 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import { useEffect } from "react"
 
+import { DataTable } from "~/components/dogs/data-table"
+import { columns } from "~/lib/dogs/columns"
+import { mockData } from "~/lib/dogs/mock-data"
+
 export default function Home() {
   const router = useRouter()
 
@@ -24,6 +28,7 @@ export default function Home() {
       </Head>
       <div className="flex min-h-screen flex-col items-center justify-center">
         BarkBuddy
+        <DataTable columns={columns} data={mockData} />
       </div>
     </>
   )
