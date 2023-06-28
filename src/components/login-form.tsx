@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ReloadIcon } from "@radix-ui/react-icons"
+import { setCookie } from "cookies-next"
 import ky from "ky"
 import { useRouter } from "next/router"
 import { useState } from "react"
@@ -18,6 +19,7 @@ import {
   FormMessage,
 } from "~/components/ui/form"
 import { Input } from "~/components/ui/input"
+import { API_URL } from "~/lib/constants"
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Required" }),
@@ -38,11 +40,31 @@ export function LoginForm() {
     },
   })
 
-  const onLogin: SubmitHandler<FormValues> = async (values) => {
-    setIsLoading(true)
-    await ky.post("/api/auth/login", { json: { ...values } })
-    setIsLoading(false)
-    await router.push("/")
+  const onLogin: SubmitHandler<FormValues> = async ({ name, email }) => {
+    try {
+      setIsLoading(true)
+
+      const searchParams = new URLSearchParams()
+      searchParams.set("name", name)
+      searchParams.set("email", email)
+
+      await ky.post(`${API_URL}/auth/login`, {
+        body: searchParams,
+        credentials: "include",
+      })
+
+      setCookie("access-token-set", true, {
+        maxAge: 60 * 60,
+        path: "/",
+      })
+
+      setIsLoading(false)
+
+      await router.push("/")
+    } catch (error) {
+      setIsLoading(false)
+      console.error(error)
+    }
   }
 
   return (

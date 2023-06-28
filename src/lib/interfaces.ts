@@ -15,3 +15,14 @@ export interface Location {
   state: string
   county: string
 }
+
+export interface Match {
+  match: string
+}
+
+export interface SearchResults {
+  resultIds: string[]
+  total: number
+  prev?: string
+  next?: string
+}
