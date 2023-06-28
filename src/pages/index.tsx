@@ -1,6 +1,20 @@
+import { getCookie } from "cookies-next"
 import Head from "next/head"
+import { useRouter } from "next/router"
+import { useEffect } from "react"
 
 export default function Home() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const navigateToLogin = async () => {
+      await router.replace("/login")
+    }
+    if (!getCookie("access-token-set")) {
+      navigateToLogin().catch(console.error)
+    }
+  }, [router])
+
   return (
     <>
       <Head>
