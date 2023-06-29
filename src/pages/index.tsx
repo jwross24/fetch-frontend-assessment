@@ -9,16 +9,20 @@ import { columns } from "~/components/dogs/columns"
 import { DataTable } from "~/components/dogs/data-table"
 import { LogoutButton } from "~/components/logout-button"
 import { Button } from "~/components/ui/button"
+import { useColumnFilters } from "~/context/column-filter-context"
 import { usePagination } from "~/context/pagination-context"
-import { useBreeds } from "~/hooks/dogs/useBreeds"
 import { useDogs } from "~/hooks/dogs/useDogs"
 import { useSearch } from "~/hooks/dogs/useSearch"
+import { league_spartan } from "~/styles/fonts"
 
 export default function Home() {
   const {
     state: { pageIndex, pageSize },
     dispatch,
   } = usePagination()
+  const {
+    columnFilters: [breeds],
+  } = useColumnFilters()
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: "breed", desc: false },
@@ -34,9 +38,8 @@ export default function Home() {
     }
   }
 
-  const { data: allBreeds } = useBreeds()
   const { data: results, refetch: refreshSearch } = useSearch({
-    breeds: [],
+    breeds: (breeds?.value as string[]) || [],
     size: Number(pageSize).toString(),
     from: (pageIndex * pageSize).toString(),
     sort: sortParam(sorting),
@@ -85,6 +88,20 @@ export default function Home() {
         />
         {isAccessTokenSet ? (
           <>
+            <div className="text-center">
+              <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight transition-colors first:mt-0">
+                Welcome to{" "}
+                <span className={`font-sans ${league_spartan.variable}`}>
+                  BarkBuddy
+                </span>
+                ! Begin Your Dog Search Here!
+              </h2>
+              <p className="my-6 leading-7">
+                Below, you&apos;ll find a list of available dogs in shelters
+                near you. Use the search filters to refine your search and find
+                the perfect furry companion.
+              </p>
+            </div>
             <DataTable
               columns={columns}
               data={dogs}
