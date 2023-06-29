@@ -23,7 +23,7 @@ export default function Login() {
         <meta name="description" content="Find your new furry companion!" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <section className="bg-muted">
+      <section className="min-h-screen bg-muted">
         <div className="mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0">
           <Link
             href="/"

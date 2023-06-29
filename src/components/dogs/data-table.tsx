@@ -2,10 +2,13 @@
 
 import {
   type ColumnDef,
+  type SortingState,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
+import React from "react"
 
 import {
   Table,
@@ -21,23 +24,32 @@ import { usePagination } from "~/context/pagination-context"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  sort: {
+    sorting: SortingState
+    setSorting: React.Dispatch<React.SetStateAction<SortingState>>
+  }
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  sort,
 }: DataTableProps<TData, TValue>) {
   const {
     state: { pageIndex, pageSize, totalCount },
   } = usePagination()
+  const { sorting, setSorting } = sort
 
   const table = useReactTable({
     data,
     columns,
     initialState: { pagination: { pageIndex, pageSize } },
+    state: { sorting },
     manualPagination: true,
     pageCount: Math.ceil(totalCount / pageSize),
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
   })
 
   return (

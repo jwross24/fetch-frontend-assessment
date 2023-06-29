@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
+import { getCookie } from "cookies-next"
 import ky from "ky"
 
 import { API_URL } from "~/lib/constants"
@@ -15,6 +16,10 @@ interface SearchQueryParams {
 }
 
 const search = async (queryParams: SearchQueryParams) => {
+  if (!getCookie("access-token-set")) {
+    return { resultIds: [], total: 0 }
+  }
+
   const { breeds: _breeds, zipCodes: _zipCodes, ...rest } = queryParams
 
   const breeds = _breeds || []

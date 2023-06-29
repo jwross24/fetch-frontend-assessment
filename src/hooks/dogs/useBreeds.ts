@@ -1,9 +1,12 @@
+import { getCookie } from "cookies-next"
 import ky from "ky"
 import { useQuery } from "@tanstack/react-query"
 
 import { API_URL } from "~/lib/constants"
 
 const fetchBreeds = async () => {
+  if (!getCookie("access-token-set")) return []
+
   const breeds = await ky(`${API_URL}/dogs/breeds`, {
     credentials: "include",
   }).json<string[]>()
