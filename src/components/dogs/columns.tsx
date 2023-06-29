@@ -4,8 +4,19 @@ import { type ColumnDef } from "@tanstack/react-table"
 import Image from "next/image"
 import { type Dog } from "~/lib/interfaces"
 import { DataTableColumnHeader } from "./data-table-column-header"
+import { FavoriteButton } from "../favorite-button"
 
 export const columns: ColumnDef<Dog>[] = [
+  {
+    id: "favorite",
+    header: "",
+    accessorKey: "id",
+    cell: ({ row }) => {
+      const id: string = row.getValue("favorite")
+      return <FavoriteButton id={id} />
+    },
+    enableSorting: false,
+  },
   {
     accessorKey: "img",
     header: "Image",
