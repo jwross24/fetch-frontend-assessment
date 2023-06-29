@@ -20,9 +20,17 @@ export default function Home() {
     state: { pageIndex, pageSize },
     dispatch,
   } = usePagination()
-  const {
-    columnFilters: [breeds],
-  } = useColumnFilters()
+  const { columnFilters } = useColumnFilters()
+
+  const breeds = columnFilters.find(
+    (columnFilter) => columnFilter.id === "breed"
+  )
+
+  const ages = columnFilters.find((columnFilter) => columnFilter.id === "age")
+  let filteredAges: number[] = []
+  if (ages) {
+    filteredAges = (ages?.value as string[]).map((age) => parseInt(age))
+  }
 
   const [sorting, setSorting] = useState<SortingState>([
     { id: "breed", desc: false },
@@ -40,6 +48,8 @@ export default function Home() {
 
   const { data: results, refetch: refreshSearch } = useSearch({
     breeds: (breeds?.value as string[]) || [],
+    ageMin: filteredAges.length > 0 ? Math.min(...filteredAges).toString() : "",
+    ageMax: filteredAges.length > 0 ? Math.max(...filteredAges).toString() : "",
     size: Number(pageSize).toString(),
     from: (pageIndex * pageSize).toString(),
     sort: sortParam(sorting),

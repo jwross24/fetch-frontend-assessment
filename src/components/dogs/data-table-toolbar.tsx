@@ -38,6 +38,13 @@ export function DataTableToolbar<TData>({
             options={breeds}
           />
         )}
+        {table.getColumn("age") && (
+          <DataTableFacetedFilter
+            column={table.getColumn("age")}
+            title="Age"
+            options={[...Array(15).keys()].map((age) => age.toString())}
+          />
+        )}
         {isFiltered && (
           <Button
             variant="ghost"
